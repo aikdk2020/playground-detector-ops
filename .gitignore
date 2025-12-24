@@ -1,0 +1,21 @@
+# 忽略编译文件
+build/
+*.o
+*.so
+
+# 忽略 Python 缓存和环境
+__pycache__/
+venv/
+.env
+
+# 忽略 IDE 配置
+.vscode/
+.idea/
+
+# 忽略数据目录 (但我们稍后会特例保留一张测试图)
+data/*
+!data/test_images/playground_209.jpg
+!data/test_images/.gitkeep
+
+# 忽略 Docker 产生的文件
+*.tar

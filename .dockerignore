@@ -1,0 +1,15 @@
+# 忽略所有编译生成的 build 目录
+**/build
+cmake-build-debug
+
+# 忽略 Git 历史
+.git
+
+# 忽略 Python 缓存和虚拟环境
+__pycache__
+*.pyc
+venv/
+.dvc/
+
+# 忽略本地的数据（数据应该通过 -v 挂载，而不是打包进镜像）
+data/
