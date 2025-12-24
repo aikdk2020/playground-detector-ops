@@ -1,0 +1,46 @@
+name: C++ Inference CI/CD
+
+# 触发条件：推送到 main 分支，或者发起 Pull Request 时
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-24.04  # 使用 GitHub 最新的 Ubuntu 环境
+
+    steps:
+    # 1. 拉取代码
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. 设置 Docker 环境
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    # 3. 构建 Docker 镜像
+    - name: Build Docker Image
+      run: |
+        docker build --network=host -t playground-detector:latest .
+
+    # 4. 运行测试 (关键步骤)
+    # 我们挂载代码里的测试图，运行容器，并检查是否生成了结果文件
+    - name: Test Run
+      run: |
+        # 创建输出目录
+        mkdir -p data/inference_results
+
+        # 运行容器
+        docker run --rm \
+          -v ${{ github.workspace }}/data:/app/data \
+          playground-detector:latest
+
+        # 验证是否生成了结果文件
+        if [ -f "data/inference_results/playground_209_docker.jpg" ]; then
+          echo "✅ Test Passed: Result image generated successfully!"
+        else
+          echo "❌ Test Failed: Result image not found!"
+          exit 1
+        fi
