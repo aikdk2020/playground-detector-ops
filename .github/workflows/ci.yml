@@ -16,6 +16,30 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    # 设置 Python 环境
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    # 安装 DVC和OSS插件 
+    - name: Install DVC
+      run: |
+        pip install dvc[oss]
+
+    # 从阿里云拉取模型
+    - name: Pull models from DVC
+      env:
+        # 这里使用环境变量注入密钥，防止密钥泄露
+        GTO_AccessKeyId: ${{ secrets.OSS_ACCESS_KEY_ID }}
+        GTO_AccessKeySecret: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+      run: |
+        # 临时配置认证信息 (不带 --local，因为 CI 环境是临时的)
+        dvc remote modify origin oss_key_id ${{ secrets.OSS_ACCESS_KEY_ID }}
+        dvc remote modify origin oss_key_secret ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+        # 拉取数据
+        dvc pull
+    
     # 2. 设置 Docker 环境
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
