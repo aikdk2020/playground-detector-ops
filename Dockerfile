@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     cmake \
     libopencv-dev \
     libgomp1 \
+    libboost-all-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # 3. 设置工作目录
@@ -35,5 +36,8 @@ RUN cmake .. && make
 # 这一步至关重要！告诉 Linux 运行时去哪里找 libonnxruntime.so
 ENV LD_LIBRARY_PATH="/app/lib/onnxruntime/lib"
 
-# 8. 默认运行命令
-CMD ["./detector_app"]
+# 8. 暴露端口 (给 K8s 或运维人员看的声明)
+EXPOSE 8080
+
+# 9. 默认运行命令
+CMD ["./detector_server"]
