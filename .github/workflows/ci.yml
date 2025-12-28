@@ -49,22 +49,38 @@ jobs:
       run: |
         docker build --network=host -t playground-detector:latest .
 
-    # 4. 运行测试 (关键步骤)
-    # 我们挂载代码里的测试图，运行容器，并检查是否生成了结果文件
-    - name: Test Run
+    # 运行测试 (全新重写！)
+    - name: Test Service
       run: |
-        # 创建输出目录
-        mkdir -p data/inference_results
-
-        # 运行容器
-        docker run --rm \
+        # 1. 后台启动容器 (-d), 使用 host 网络模式以便直接访问端口
+        # --name detector: 给容器起个名方便后面杀掉
+        docker run -d --network=host --name detector \
           -v ${{ github.workspace }}/data:/app/data \
-          playground-detector:latest
+          playground-service:latest
 
-        # 验证是否生成了结果文件
-        if [ -f "data/inference_results/playground_209_docker.jpg" ]; then
-          echo "✅ Test Passed: Result image generated successfully!"
+        # 2. 等待服务启动 (C++ 很快，5秒足够了)
+        echo "Waiting for server to start..."
+        sleep 5
+
+        # 3. 查看一下容器日志 (方便调试)
+        docker logs detector
+
+        # 4. 发送测试请求
+        # 我们把结果存到一个变量里
+        RESPONSE=$(curl -s -X POST -H "Content-Type: application/json" \
+          -d '{"image_path": "/app/data/test_images/playground_209.jpg"}' \
+          http://localhost:8080/predict)
+
+        echo "Server Response: $RESPONSE"
+
+        # 5. 验证结果
+        # 检查返回的 JSON 字符串里是否包含 "success"
+        if [[ "$RESPONSE" == *"success"* ]]; then
+          echo "✅ Test Passed: Service responded with success!"
         else
-          echo "❌ Test Failed: Result image not found!"
+          echo "❌ Test Failed: Invalid response!"
           exit 1
         fi
+
+        # 6. 清理容器
+        docker stop detector
