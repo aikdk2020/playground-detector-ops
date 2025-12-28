@@ -47,7 +47,7 @@ jobs:
     # 3. 构建 Docker 镜像
     - name: Build Docker Image
       run: |
-        docker build --network=host -t playground-detector:latest .
+        docker build --network=host -t playground-service:latest .
 
     # 运行测试 (全新重写！)
     - name: Test Service
