@@ -1,0 +1,12 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: playground-detector-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: playground-detector-deploy # 必须和 deployment.yaml 里的名字一样
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 50 # 目标：让每个 Pod 的 CPU 维持在 50% 以下

@@ -1,4 +1,4 @@
-// src/cpp_inference/server.cpp
+#include <chrono>
 #include "crow_all.h"
 #include "PlaygroundDetector.hpp" // 引入我们刚才写的类
 
@@ -32,10 +32,23 @@ int main() {
 
         std::string img_path = json_body["image_path"].s();
         
+        // 1. 开始计时
+        auto start = std::chrono::high_resolution_clock::now();
+
         // 调用真实的推理逻辑
         // 注意：这里会发生磁盘读取，生产环境通常传 Base64，但现在先这样
         std::vector<DetectionResult> results = detector.detect(img_path);
 
+        // 2. 结束计时
+        auto end = std::chrono::high_resolution_clock::now();
+        // 计算耗时 (毫秒)
+        double latency_ms = std::chrono::duration<double, std::milli>(end - start).count();
+
+        // 3. 打印到标准输出 (这是最简单的日志监控方式)
+        // 格式：[METRICS] method=predict latency=12.34 status=success
+        std::cout << "[METRICS] method=predict latency=" << latency_ms
+                  << " status=success count=" << results.size() << std::endl;
+        
         // 构建 JSON 响应
         crow::json::wvalue resp;
         resp["status"] = "success";

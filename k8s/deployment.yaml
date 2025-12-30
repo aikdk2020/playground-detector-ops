@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playground-detector-deploy # 部署的名字
+spec:
+  replicas: 2 # 愿望：我想要 2 个副本同时运行 (高可用！)
+  selector:
+    matchLabels:
+      app: playground-detector
+  template:
+    metadata:
+      labels:
+        app: playground-detector
+    spec:
+      containers:
+      - name: detector-container
+        # 注意：这里 imagePullPolicy 设为 Never，表示只用本地镜像，不去网上拉
+        image: playground-service:latest 
+        imagePullPolicy: Never 
+        ports:
+        - containerPort: 8080
+        # --- 新增部分 ---
+        resources:
+          requests:
+            cpu: 100m  # 至少需要 0.1 核
+          limits:
+            cpu: 200m  # 最多只给 0.2 核 (设低点方便演示)
+        # 挂载数据卷 (为了演示简单，我们先用 hostPath，生产环境通常用 PVC)
+        volumeMounts:
+        - name: data-volume
+          mountPath: /app/data
+      volumes:
+      - name: data-volume
+        hostPath:
+          # 注意：这是 Minikube 虚拟机里的路径，稍后我们需要把本机数据挂载进去
+          path: /data/playground_project
