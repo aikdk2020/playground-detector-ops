@@ -8,23 +8,23 @@
 企业级的高性能遥感图像检测系统, 展示 MLOps 全链路 的实践案例。它实现了从算法模型管理、C++ 高性能微服务封装，到 Kubernetes 云原生部署与自动弹性伸缩（HPA）的完整闭环。
 
 ## ✨ 核心特性
-⚡ 高性能 (High Performance):
-- **后端核心采用 C++17 重构，基于 Crow 异步 Web 框架。**
-- **集成 ONNX Runtime C++ API 进行推理加速，相比 Python 原型延迟降低。**
-- **实现 RAII 资源管理，杜绝内存泄漏。**
+**⚡ 高性能 (High Performance)**:
+- 后端核心采用 C++17 重构，基于 Crow 异步 Web 框架。
+- 集成 ONNX Runtime C++ API 进行推理加速，相比 Python 原型延迟降低。
+- 实现 RAII 资源管理，杜绝内存泄漏。
 
-☁️ 云原生架构 (Cloud-Native):
-- **完全 Docker 容器化.**
-- **基于 Kubernetes (Minikube) 编排，配置 Deployment 实现双副本高可用**
-- **HPA 自动伸缩: 当 CPU 利用率超过 50% 时，Pod 自动从 2 个扩容至 5 个以应对突发流量。**
+**☁️ 云原生架构 (Cloud-Native)**:
+- 完全 Docker 容器化.
+- 基于 Kubernetes (Minikube) 编排，配置 Deployment 实现双副本高可用
+- HPA 自动伸缩: 当 CPU 利用率超过 50% 时，Pod 自动从 2 个扩容至 5 个以应对突发流量。
 
-🛠️ 工程化治理 (MLOps):
-- **CI/CD: 集成 GitHub Actions，自动完成 C++ 编译、Docker 构建、Python 语法检查及集成测试。**
-- **数据治理: 使用 DVC (Data Version Control) + 阿里云 OSS 管理大模型文件，实现代码与数据的解耦。**
+**🛠️ 工程化治理 (MLOps):**
+- CI/CD: 集成 GitHub Actions，自动完成 C++ 编译、Docker 构建、Python 语法检查及集成测试。
+- 数据治理: 使用 DVC (Data Version Control) + 阿里云 OSS 管理大模型文件，实现代码与数据的解耦。
 
-📊 全栈交互:
-- **提供基于 Streamlit 的可视化 Web 前端。**
-- **实现了二进制流透传协议，解决 Web 端图片编解码导致的模型精度损失问题。**
+**📊 全栈交互:**
+- 提供基于 Streamlit 的可视化 Web 前端。
+- 实现了二进制流透传协议，解决 Web 端图片编解码导致的模型精度损失问题。
 
 ## 🚀 快速开始
 ### 前置要求 (Prerequisites):
@@ -38,7 +38,7 @@ cd playground_detection_ops
 ```
 ### 2. 准备模型文件
 你需要下载预训练好的 YOLO11 模型文件。
-请前往 [Releases 页面](https://github.com/aikdk/playground-detector-ops/releases) 下载 `best.onnx` 文件，并将其放入 `models/onnx/` 目录中。
+请前往 [Releases 页面](https://github.com/aikdk2020/playground-detector-ops/releases) 下载 `best.onnx` 文件，并将其放入 `models/onnx/` 目录中。
 
 ### 3. 启动 Kubernetes 集群与部署
 #### 3.1: 启动 Minikube
