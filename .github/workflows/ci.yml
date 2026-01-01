@@ -27,6 +27,19 @@ jobs:
       run: |
         pip install dvc[oss]
 
+    # [新增] 安装前端依赖
+    - name: Install Frontend Dependencies
+      run: |
+        pip install streamlit requests pillow numpy
+
+    # [新增] 前端代码静态检查
+    # 我们不运行 Streamlit (因为它会卡住等待浏览器)，但我们可以编译一下看有没有语法错误
+    - name: Check Frontend Code Syntax
+      run: |
+        # python -m py_compile 会检查语法错误，如果有错会直接报错退出 CI
+        python -m py_compile frontend/app.py
+        echo "✅ Frontend code syntax is valid."
+
     # 从阿里云拉取模型
     - name: Pull models from DVC
       env:
